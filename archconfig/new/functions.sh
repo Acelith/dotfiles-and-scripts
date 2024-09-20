@@ -143,10 +143,14 @@ yayInstaller() {
     fi
 }
 
+installForeignCharacters(){
+    sudo pacman -S adobe-source-han-sans-cn-fonts adobe-source-han-sans-jp-fonts adobe-source-han-sans-kr-fonts adobe-source-han-sans-otc-fonts adobe-source-han-sans-tw-fonts adobe-source-han-serif-cn-fonts adobe-source-han-serif-jp-fonts adobe-source-han-serif-kr-fonts adobe-source-han-serif-otc-fonts adobe-source-han-serif-tw-fonts
+}
+
 ######################################################
 ##################System configuration################
 ######################################################
-
+# Consider to use the script for installing the dotfiles
 # Function to configure bashrc with custom aliases
 configBashrc() {
     echo "alias ll='ls -la --color'" >>~/.bashrc

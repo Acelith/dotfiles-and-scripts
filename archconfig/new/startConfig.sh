@@ -3,6 +3,7 @@
 source functions.sh
 #Configs
 configBashrc
+installForeignCharacters
 
 # Install packet managers
 paruInstaller
