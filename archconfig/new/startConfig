@@ -1,0 +1,17 @@
+#!/bin/bash
+
+source functions.sh
+#Configs
+configBashrc
+
+# Install packet managers
+paruInstaller
+yayInstaller
+installHomebrew
+
+# Install apps
+installFlatpakApps
+vmwareInstall
+installTuxedoCenter
+installAppImageLauncher
+installKdrive
