@@ -23,3 +23,12 @@ To install the dotfiles on your system, run the following command:
 
 ```sh
 ./scripts/installDotFiles.sh
+```
+
+# TODO
+
+- MIgrate to [chezmoi](https://www.chezmoi.io/) for managing all the files
+- Migrate to Fastfetch
+- Update the scripts for a global usage
+- Separate file for script configs (Like links or paths)
+- Update wallpapers with the offline collection
