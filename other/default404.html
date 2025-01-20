@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Unavailable</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #ff6a00, #ee0979);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            animation: fadeIn 2s ease-in;
+        }
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            animation: slideUp 1.5s ease-in-out;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+        .error-code {
+            font-size: 4em;
+            font-weight: bold;
+            color: #ffcc00;
+            animation: pulse 1.5s infinite;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 80px;
+            margin-bottom: 20px;
+            animation: bounce 1.5s infinite;
+        }
+        .quote {
+            font-style: italic;
+            color: #ffcc00;
+            margin-top: 20px;
+            animation: fadeIn 3s ease-in;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/OOjs_UI_icon_alert-yellow.svg" class="logo" alt="Warning">
+        <h1>Site Unavailable</h1>
+        <div class="error-code">404</div>
+        <p>The site you are trying to reach is currently unavailable.</p>
+        <p>If the issue persists, please contact the site administrator.</p>
+        <p class="quote">"May the Force be with you... when the server isn't."</p>
+        <p class="quote">"One does not simply refresh into Mordor."</p>
+        <p class="quote">"The site is down, but there is another..."</p>
+        <p class="quote">"I find your lack of connection disturbing."</p>
+        <p class="quote">"It's over, Anakin! I have the high ground... but not the bandwidth."</p>
+        <p class="quote">"This is the way... to the 404 page."</p>
+    </div>
+</body>
+</html>
