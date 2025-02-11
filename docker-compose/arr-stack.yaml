@@ -22,14 +22,15 @@ services:
       - 10027:9117 # Jackett
       - 10028:8989 # Sonarr
       - 10029:9696 # Prowlarr
+      - 10030:8096 # Jellyseer
     volumes:
       - /opt/stacks/arr-stack/gluetun:/gluetun
     environment:
       # see https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/nordvpn.md
       - VPN_SERVICE_PROVIDER=nordvpn
       - VPN_TYPE=openvpn # or wireguard
-      - OPENVPN_USER=USER
-      - OPENVPN_PASSWORD=PWD
+      - OPENVPN_USER=asdada
+      - OPENVPN_PASSWORD=asdsad
       - SERVER_COUNTRIES=Italy
       - TZ=Europe/Zurich
       - UPDATER_PERIOD=24h
@@ -43,8 +44,8 @@ services:
     container_name: qbittorrent-stack
     network_mode: service:gluetun
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=0
+      - PGID=0
       - TZ=Europe/Zurich
       - WEBUI_PORT=8085
     volumes:
@@ -71,6 +72,8 @@ services:
     volumes:
       - /opt/stacks/arr-stack/jackett/data:/config
       - /opt/stacks/arr-stack/jackett/blackhole:/downloads
+    depends_on:
+      - gluetun
     restart: unless-stopped
     ################################
     ################################
@@ -83,15 +86,17 @@ services:
     container_name: sonarr-stack
     network_mode: service:gluetun
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=0
+      - PGID=0
       - TZ=Etc/UTC
     volumes:
       - /opt/stacks/arr-stack/sonarr/data:/config
-      - /mnt/synology/Download:/downloads #optional
+      - /mnt/synology/Download:/downloads
       - /mnt/synology/Anime:/multimedia/anime
       - /mnt/synology/SerieTV:/multimedia/serie
       - /mnt/synology/Film:/multimedia/film
+    depends_on:
+      - gluetun
     restart: unless-stopped
     ################################
     ################################
@@ -108,5 +113,23 @@ services:
       - TZ=Europe/Zurich
     volumes:
       - /opt/stacks/arr-stack/prowlarr/data:/config
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+    ################################
+    ################################
+    ########## jellyseerr ##########
+    ################################
+    ################################
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseer-stack
+    network_mode: service:gluetun
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=Europe/Zurich
+      - PORT=8096
+    volumes:
+      - /opt/stacks/arr-stack/jellyseer/config:/app/config
     restart: unless-stopped
 networks: {}
