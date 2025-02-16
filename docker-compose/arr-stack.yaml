@@ -23,17 +23,20 @@ services:
       - 10028:8989 # Sonarr
       - 10029:9696 # Prowlarr
       - 10030:8096 # Jellyseer
+      - 10031:6767 # Bazarr
+      - 10032:8000 # Gluetun web
     volumes:
       - /opt/stacks/arr-stack/gluetun:/gluetun
     environment:
       # see https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/nordvpn.md
       - VPN_SERVICE_PROVIDER=nordvpn
       - VPN_TYPE=openvpn # or wireguard
-      - OPENVPN_USER=asdada
-      - OPENVPN_PASSWORD=asdsad
+      - OPENVPN_USER=${OPENVPN_USER}
+      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
       - SERVER_COUNTRIES=Italy
-      - TZ=Europe/Zurich
+      - TZ=${TIMEZONE}
       - UPDATER_PERIOD=24h
+      - HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH=./config.toml
     ################################
     ################################
     ######### qbittorrent ##########
@@ -46,11 +49,12 @@ services:
     environment:
       - PUID=0
       - PGID=0
-      - TZ=Europe/Zurich
+      - TZ=${TIMEZONE}
       - WEBUI_PORT=8085
     volumes:
       - /opt/stacks/arr-stack/qbittorrent:/config
       - /mnt/synology/Download:/downloads
+      - /opt/extFiles/VueTorrent:/config/VueTorrent
     depends_on:
       - gluetun
     restart: always
@@ -66,7 +70,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/Zurich
+      - TZ=${TIMEZONE}
       - AUTO_UPDATE=true #optional
       - RUN_OPTS= #optional
     volumes:
@@ -74,7 +78,7 @@ services:
       - /opt/stacks/arr-stack/jackett/blackhole:/downloads
     depends_on:
       - gluetun
-    restart: unless-stopped
+    restart: always
     ################################
     ################################
     ############ SONARR ############
@@ -88,7 +92,7 @@ services:
     environment:
       - PUID=0
       - PGID=0
-      - TZ=Etc/UTC
+      - TZ=${TIMEZONE}
     volumes:
       - /opt/stacks/arr-stack/sonarr/data:/config
       - /mnt/synology/Download:/downloads
@@ -97,7 +101,7 @@ services:
       - /mnt/synology/Film:/multimedia/film
     depends_on:
       - gluetun
-    restart: unless-stopped
+    restart: always
     ################################
     ################################
     ############ prowlarr ##########
@@ -110,12 +114,12 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/Zurich
+      - TZ=${TIMEZONE}
     volumes:
       - /opt/stacks/arr-stack/prowlarr/data:/config
     depends_on:
       - gluetun
-    restart: unless-stopped
+    restart: always
     ################################
     ################################
     ########## jellyseerr ##########
@@ -127,9 +131,30 @@ services:
     network_mode: service:gluetun
     environment:
       - LOG_LEVEL=debug
-      - TZ=Europe/Zurich
+      - TZ=${TIMEZONE}
       - PORT=8096
     volumes:
       - /opt/stacks/arr-stack/jellyseer/config:/app/config
-    restart: unless-stopped
+    restart: always
+    ################################
+    ################################
+    ############ Bazarr ############
+    ################################
+    ################################
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr-stack
+    network_mode: service:gluetun
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+    volumes:
+      - /opt/stacks/arr-stack/bazarr/config:/config
+      - /mnt/synology/Anime:/multimedia/anime
+      - /mnt/synology/SerieTV:/multimedia/serie
+      - /mnt/synology/Film:/multimedia/film
+    depends_on:
+      - gluetun
+    restart: always
 networks: {}
