@@ -11,7 +11,7 @@ services:
     # Hostname to use for container, required in some instances for the rest of the stack to each other endpoints 
     hostname: gluetun
     # line above must be uncommented to allow external containers to connect.
-    # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun
+    # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun 
     cap_add:
       - NET_ADMIN
     devices:
@@ -25,23 +25,26 @@ services:
       - 10030:8096 # Jellyseer
       - 10031:6767 # Bazarr
       - 10032:8000 # Gluetun web
+      - 10033:7878 # Radarr
+      - 10034:8191 # FlareSolverr
     volumes:
       - /opt/stacks/arr-stack/gluetun:/gluetun
     environment:
-      # see https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/nordvpn.md
-      - VPN_SERVICE_PROVIDER=nordvpn
-      - VPN_TYPE=openvpn # or wireguard
-      - OPENVPN_USER=${OPENVPN_USER}
-      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
-      - SERVER_COUNTRIES=Italy
+      - VPN_SERVICE_PROVIDER=airvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
+      - WIREGUARD_ADDRESSES=10.148.164.186/32
+      - SERVER_COUNTRIES=${VPN_COUNTRY}
+      - FIREWALL_VPN_INPUT_PORTS=49427
       - TZ=${TIMEZONE}
-      - UPDATER_PERIOD=24h
+      - UPDATER_PERIOD=48h
       - HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH=./config.toml
-    ################################
-    ################################
-    ######### qbittorrent ##########
-    ################################
-    ################################
+  ################################
+  ################################
+  ######### qbittorrent ##########
+  ################################
+  ################################
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent
     container_name: qbittorrent-stack
@@ -68,8 +71,8 @@ services:
     container_name: jackett-stack
     network_mode: service:gluetun
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=0
+      - PGID=0
       - TZ=${TIMEZONE}
       - AUTO_UPDATE=true #optional
       - RUN_OPTS= #optional
@@ -112,8 +115,8 @@ services:
     container_name: prowlarr-stack
     network_mode: service:gluetun
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=0
+      - PGID=0
       - TZ=${TIMEZONE}
     volumes:
       - /opt/stacks/arr-stack/prowlarr/data:/config
@@ -146,14 +149,54 @@ services:
     container_name: bazarr-stack
     network_mode: service:gluetun
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=0
+      - PGID=0
       - TZ=${TIMEZONE}
     volumes:
       - /opt/stacks/arr-stack/bazarr/config:/config
       - /mnt/synology/Anime:/multimedia/anime
       - /mnt/synology/SerieTV:/multimedia/serie
       - /mnt/synology/Film:/multimedia/film
+    depends_on:
+      - gluetun
+    restart: always
+    ################################
+    ################################
+    ############ Radarr ############
+    ################################
+    ################################
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    network_mode: service:gluetun
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=${TIMEZONE}
+    volumes:
+      - /opt/stacks/arr-stack/radarr/config:/config
+      - /mnt/synology/Download:/downloads
+      - /mnt/synology/Anime:/multimedia/anime
+      - /mnt/synology/SerieTV:/multimedia/serie
+      - /mnt/synology/Film:/multimedia/film
+    depends_on:
+      - gluetun
+    restart: always
+    ################################
+    ################################
+    ########## FlareSolverr ########
+    ################################
+    ################################
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr-stack
+    network_mode: service:gluetun
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=${TIMEZONE}
     depends_on:
       - gluetun
     restart: always
