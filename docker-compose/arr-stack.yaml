@@ -41,12 +41,12 @@ services:
       - TZ=${TIMEZONE}
       - UPDATER_PERIOD=24h
       - HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH=./config.toml
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8000/v1/health"]
-      interval: 1m
-      timeout: 10s
-      retries: 5
-      start_period: 30s
+      # HEALTHCHECK CONFIGURATION
+      - HEALTH_TARGET_ADDRESS=cloudflare.com:443
+      - HEALTH_VPN_DURATION_INITIAL=6s
+      - HEALTH_VPN_DURATION_ADDITION=5s
+      - HEALTH_SUCCESS_WAIT_DURATION=5s
+      - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
 
   ################################
   ################################
